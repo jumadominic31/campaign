@@ -30,9 +30,30 @@ Route::group(['middleware' => 'auth'] , function () {
         'uses' => 'UsersController@getLogout',
         'as' => 'users.logout'
     ]);
-
+    
     Route::get('/', [
         'uses' => 'DashboardController@index' , 
         'as' => 'dashboard.index'
     ]);
+    
+    Route::get('/groups', [
+        'uses' => 'GroupsController@index' , 
+        'as' => 'groups.index'
+    ]);
+    
+    Route::post('/groups/store', [
+        'uses' => 'GroupsController@store' , 
+        'as' => 'groups.store'
+    ]);
+
+    Route::match(array('PUT', 'PATCH'), '/groups/{id}', [
+        'uses' => 'GroupsController@update' , 
+        'as' => 'groups.update'
+    ]);
+
+    Route::delete('/groups/{id}', [
+        'uses' => 'GroupsController@destroy' , 
+        'as' => 'groups.destroy'
+    ]);
+
 });

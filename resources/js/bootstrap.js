@@ -11,6 +11,11 @@ try {
     window.$ = window.jQuery = require('jquery');
 
     require('bootstrap');
+    // require('datatables.net' )(window, $);
+    require('datatables.net');
+    require('datatables.net-bs4');
+    // require( '../../node_modules/datatables.net/js/jquery.dataTables.js' );
+    // require( '../../node_modules/datatables.net-bs4/js/dataTables.bootstrap4.js' );
 } catch (e) {}
 
 /**
@@ -18,6 +23,7 @@ try {
  * to our Laravel back-end. This library automatically handles sending the
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
+require('admin-lte');
 
 window.axios = require('axios');
 
