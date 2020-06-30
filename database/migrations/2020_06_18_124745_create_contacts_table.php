@@ -21,7 +21,7 @@ class CreateContactsTable extends Migration
             $table->string('phone');
             $table->string('email')->nullable();
             $table->integer('gender_id')->nullable();
-            $table->boolean('opt-in')->nullable();
+            $table->boolean('opt_in')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamps();
         });

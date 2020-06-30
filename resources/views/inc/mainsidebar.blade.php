@@ -33,6 +33,14 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ route('contacts.index') }}" class="nav-link">
+                    <i class="nav-icon fas fa-th"></i>
+                    <p>
+                    Contacts
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route('groups.index') }}" class="nav-link">
                     <i class="nav-icon fas fa-th"></i>
                     <p>

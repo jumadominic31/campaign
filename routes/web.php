@@ -24,7 +24,7 @@ Route::post('/users/signin', [
     'as' => 'users.signin'
 ]);
 
-Route::group(['middleware' => 'auth'] , function () {
+// Route::group(['middleware' => 'auth'] , function () {
 
     Route::get('/users/logout', [
         'uses' => 'UsersController@getLogout',
@@ -35,7 +35,8 @@ Route::group(['middleware' => 'auth'] , function () {
         'uses' => 'DashboardController@index' , 
         'as' => 'dashboard.index'
     ]);
-    
+
+    // Groups
     Route::get('/groups', [
         'uses' => 'GroupsController@index' , 
         'as' => 'groups.index'
@@ -56,4 +57,24 @@ Route::group(['middleware' => 'auth'] , function () {
         'as' => 'groups.destroy'
     ]);
 
-});
+    // Contacts
+    Route::get('/contacts', [
+        'uses' => 'ContactsController@index' , 
+        'as' => 'contacts.index'
+    ]);
+    
+    Route::post('/contacts/store', [
+        'uses' => 'ContactsController@store' , 
+        'as' => 'contacts.store'
+    ]);
+
+    Route::match(array('PUT', 'PATCH'), '/contacts/{id}', [
+        'uses' => 'ContactsController@update' , 
+        'as' => 'contacts.update'
+    ]);
+
+    Route::delete('/contacts/{id}', [
+        'uses' => 'ContactsController@destroy' , 
+        'as' => 'contacts.destroy'
+    ]);
+// });
