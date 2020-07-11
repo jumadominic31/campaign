@@ -17,7 +17,7 @@
           <div class="modal-body">
             <div class="form-group">
                 <label>Title</label>
-                <select name="title" class="form-control select2" style="width: 100%;">
+                <select name="title" class="form-control select" style="width: 100%;">
                   <option selected="selected"></option>
                   <option value="Mr">Mr</option>
                   <option value="Ms">Ms</option>
@@ -39,7 +39,7 @@
             </div>
             <div class="form-group">
                 <label>Gender</label>
-                <select name="gender" class="form-control select2" style="width: 100%;">
+                <select name="gender" class="form-control select" style="width: 100%;">
                     <option selected="selected"></option>
                     <option value="1">Male</option>
                     <option value="2">Female</option>
@@ -49,18 +49,18 @@
             <div class="form-group">
                 <label>Groups</label>
                 <select class="select2" name="groups[]" multiple="multiple" data-placeholder="Select Group(s) to add User" style="width: 100%;">
-                    <option value="1">Alabama</option>
-                    <option value="2">Alaska</option>
-                    <option value="3">California</option>
-                    <option value="4">Delaware</option>
-                    <option value="5">Tennessee</option>
-                    <option value="6">Texas</option>
-                    <option value="7">Washington</option>
+                  @foreach ($groups as $group)
+                    <option value="{{ $group['id'] }}" 
+                    @if ($group['id'] == old('groups[]'))
+                      selected = 'selected'
+                    @endif
+                    >{{ $group['name']}}</option>
+                  @endforeach
                 </select>
             </div>
             <div class="form-contact">
                 <label>Opt In</label>
-                <select name="opt_in" class="form-control select2" style="width: 100%;">
+                <select name="opt_in" class="form-control select" style="width: 100%;">
                     <option selected="selected" value="1">Yes</option>
                     {{-- <option value="1">Yes</option> --}}
                     <option value="0">No</option>
@@ -93,7 +93,7 @@
           <div class="modal-body">
             <div class="form-group">
                 <label>Title</label>
-                <select name="title" id="title" class="form-control select2" style="width: 100%;">
+                <select name="title" id="title" class="form-control select" style="width: 100%;">
                   <option selected="selected"></option>
                   <option value="Mr">Mr</option>
                   <option value="Ms">Ms</option>
@@ -115,7 +115,7 @@
             </div>
             <div class="form-group">
                 <label>Gender</label>
-                <select name="gender" id="gender" class="form-control select2" style="width: 100%;">
+                <select name="gender" id="gender" class="form-control select" style="width: 100%;">
                     <option selected="selected"></option>
                     <option value="1">Male</option>
                     <option value="2">Female</option>
@@ -124,19 +124,19 @@
             </div>
             <div class="form-group">
                 <label>Multiple</label>
-                <select class="select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
-                    <option>Alabama</option>
-                    <option>Alaska</option>
-                    <option>California</option>
-                    <option>Delaware</option>
-                    <option>Tennessee</option>
-                    <option>Texas</option>
-                    <option>Washington</option>
+                <select class="select2" id="groups" name="groups[]" multiple="multiple" data-placeholder="Select Group(s) to add User" style="width: 100%;">
+                  @foreach ($groups as $group)
+                    <option value="{{ $group['id'] }}" 
+                    {{-- @if ($group['id'] == old(groups[]))
+                      selected = 'selected'
+                    @endif --}}
+                    >{{ $group['name']}}</option>
+                  @endforeach
                 </select>
             </div>
             <div class="form-contact">
                 <label>Opt In</label>
-                <select name="opt_in" id="opt_in" class="form-control select2" style="width: 100%;">
+                <select name="opt_in" id="opt_in" class="form-control select" style="width: 100%;">
                     <option selected="selected" value="1">Yes</option>
                     {{-- <option value="1">Yes</option> --}}
                     <option value="0">No</option>
@@ -180,13 +180,13 @@
   {{-- end delete contact --}}
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
+
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>DataTables</h1>
+            <h1>Contacts</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -242,8 +242,14 @@
                       <td>{{$contact['name']}}</td>
                       <td>{{$contact['phone']}}</td>
                       <td>{{$contact['email']}}</td>
-                      <td>{{$contact['gender_id']}}</td>
-                      <td>{{$contact['opt_in']}}</td>
+                      <td>{{$contact['gender']['name']}}</td>
+                      <td>
+                        @if ($contact['opt_in'] == '1')
+                        Yes
+                        @else
+                        No
+                        @endif
+                      </td>
                       <td>
                           <a href="#" class="btn btn-success editBtn">Edit</a>
                           <a href="#" class="btn btn-danger deleteBtn">Delete</a>
@@ -264,46 +270,8 @@
       <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-  </div>
+
   <!-- /.content-wrapper -->
-
-  {{-- edit and delete contacts script --}}
-  {{-- <script>
-    $(document).ready(function(e){
-      var table = $('#contacttable').DataTable() ;
-      table.on('click', '.editBtn', function(){
-          $tr = $(this).closest('tr');
-          if ($($tr).hasClass('child')){
-            $tr = $tr.prev('.parent');
-          }
-          var data = table.row($tr).data();
-          console.log(data);
-          
-          $('#title').val(data[1]);
-          $('#name').val(data[2]);
-          $('#phone').val(data[3]);
-          $('#email').val(data[4]);
-          $('#gender_id').val(data[5]);
-          $('#opt_in').val(data[6]);
-          
-          $('#editForm').attr('action', '/contacts/'+data[0]);
-          $('#editContactMdl').modal('show');
-      });
-      
-      table.on('click', '.deleteBtn', function(){
-          $tr = $(this).closest('tr');
-          if ($($tr).hasClass('child')){
-            $tr = $tr.prev('.parent');
-          }
-          var data = table.row($tr).data();
-          console.log(data);
-          
-          $('#deleteForm').attr('action', '/contacts/'+data[0]);
-          $('#deleteContactMdl').modal('show');
-      });
-    })
-
-  </script> --}}
 
   <script type="text/javascript">
     $(document).ready(function (){
@@ -316,7 +284,7 @@
           data: $('#addForm').serialize(),
           success: function(response) {
             if (response.contact){
-              console.log(response)
+              console.log(JSON.stringify(response))
               $('#addContactMdl').modal('hide')
               alert('Data Saved');
               location.reload();
@@ -333,6 +301,8 @@
 
 <script type="text/javascript">
   $(document).ready(function (){
+    $('.select2').select2();
+    
     var table = $('#contacttable').DataTable() ;
     table.on('click', '.editBtn', function(){
     // $('.editBtn').on('click', function(){
@@ -347,7 +317,7 @@
       $('#name').val(data[2]);
       $('#phone').val(data[3]);
       $('#email').val(data[4]);
-      $('#gender_id').val(data[5]);
+      $('#gender').val(data[5]);
       $('#opt_in').val(data[6]);
 
       $('#editForm').on('submit', function(e){
@@ -366,7 +336,7 @@
             // }
             // else {
               // console.log(JSON.stringify(response));
-              console.log(response);
+              console.log(JSON.stringify(response));
               $('#editContactMdl').modal('hide');
               alert('Data Updated');
               location.reload();
@@ -421,7 +391,19 @@
     });
   });
 </script>
-  
+{{-- <script>
+  $('#stationid').on('change',function(e){
+      var stationid = e.target.value;
+
+      $.get('/stationid/attendant/'+stationid, function(data){
+          $('#attendantid').empty();
+          $.each(data, function(index, attendantObj){
+              $('#attendantid').append('<option value="'+attendantObj.id+'">'+attendantObj.username+'</option>');
+          });
+      });
+  });
+//
+</script> --}}
   {{-- end edit script --}}
 
 @endsection

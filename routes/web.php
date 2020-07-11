@@ -24,7 +24,7 @@ Route::post('/users/signin', [
     'as' => 'users.signin'
 ]);
 
-// Route::group(['middleware' => 'auth'] , function () {
+Route::group(['middleware' => 'auth'] , function () {
 
     Route::get('/users/logout', [
         'uses' => 'UsersController@getLogout',
@@ -77,4 +77,26 @@ Route::post('/users/signin', [
         'uses' => 'ContactsController@destroy' , 
         'as' => 'contacts.destroy'
     ]);
-// });
+
+    Route::get('/contacts/getgroups/{contact_id}', [
+        'uses' => 'ContactsController@getgroups' , 
+        'as' => 'contacts.getgroups'
+    ]);
+
+    // Compose
+    Route::get('/compose', [
+        'uses' => 'SmsController@compose' , 
+        'as' => 'compose.index'
+    ]);
+
+    // Send message
+    Route::post('/compose/sendmsg', [
+        'uses' => 'SmsController@sendmsg',
+        'as' => 'compose.sendmsg'
+    ]);
+
+    Route::get('/sent', [
+        'uses' => 'SmsController@sent' , 
+        'as' => 'sent.index'
+    ]);
+});

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Customer;
 use App\Contact;
+use App\Group;
+use App\Contactgroupcombo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -15,19 +17,17 @@ class ContactsController extends Controller
     public function index()
     {
         $contacts = Contact::all();
-        return view('contacts.index', ['contacts' => $contacts]);
+        $groups = Group::where('customer_id', '=', '1')->get();
+        return view('contacts.index', ['contacts' => $contacts, 'groups' => $groups]);
     }
 
     public function store(Request $request)
     {
-        // $this->validate($request, [
-        //     'name' => 'required',
-        //     'phone' => 'required'
-        // ]);
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'phone' => 'required'
         ]);
+        $groups = [];
 
         if ($validator->fails())
         {
@@ -56,8 +56,20 @@ class ContactsController extends Controller
         $contact->customer_id = '1';
         $contact->save();
 
+        $groups = $request->input('groups');
+        if (!empty($groups)) 
+        {
+            foreach ($groups as $group){
+                $congrpcombo = new Contactgroupcombo;
+                $congrpcombo->customer_id = '1';
+                $congrpcombo->contact_id = $contact->id;
+                $congrpcombo->group_id = $group;
+                $congrpcombo->save();
+            }
+        }
+
         // return redirect('/contacts')->with('success', 'Contact added');
-        return response()->json(['contact' => $contact], 201);
+        return response()->json(['contact' => $contact, 'groups' => $groups], 201);
     }
 
     public function update(Request $request, $id)
@@ -67,6 +79,7 @@ class ContactsController extends Controller
             'name' => 'required',
             'phone' => 'required'
         ]);
+        $groups = [];
 
         if ($validator->fails())
         {
@@ -97,17 +110,20 @@ class ContactsController extends Controller
         $contact->customer_id = '1';
         $contact->save();
 
-        // if ($request->input('groups') != null) 
-        // {
-        //     $groups = $request->input('groups');
-        // }
-        // else
-        // {
-        //     $groups = [];
-        // }
+        $groups = $request->input('groups');
+        if (!empty($groups)) 
+        {
+            foreach ($groups as $group){
+                $congrpcombo = new Contactgroupcombo;
+                $congrpcombo->customer_id = '1';
+                $congrpcombo->contact_id = $contact->id;
+                $congrpcombo->group_id = $group;
+                $congrpcombo->save();
+            }
+        }
 
         // return redirect('/contacts', ['success' => 'Contact updated', 'groups' => $groups]);
-        return response()->json(['contact' => $contact, 'message' => 'success'], 204);
+        return response()->json(['contact' => $contact, 'groups' => $groups], 204);
     }
 
     public function destroy($id)
@@ -116,5 +132,11 @@ class ContactsController extends Controller
         $contact->delete();
         // return redirect('/contacts')->with('success', 'Contact Deleted');
         return response()->json(['message' => 'success'], 204);
-    }    
+    }
+    
+    public function getgroups($contact_id)
+    {
+        $groups = Contactgroupcombo::join('groups', 'contactgroupcombos.group_id', '=', 'groups.id')->select('contactgroupcombos.group_id', 'groups.name' )->where('contact_id', '=', $contact_id)->get();
+        return response()->json(['groups' => $groups], 200);
+    }
 }

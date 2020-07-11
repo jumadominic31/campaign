@@ -4,50 +4,97 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>Campaign Wox</title>
-
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-        <!-- <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet"> -->
-        <link href="{{ asset('css/frontpage.css') }}" rel="stylesheet">
-        <link href="{{ asset('css/footer.css') }}" rel="stylesheet">
-        <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     
+        <!-- CSRF Token -->
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+    
+        <title>{{ config('app.name', 'Campaign Wox') }}</title>
+    
+        <!-- Scripts -->
+        <script src="{{ asset('js/app.js') }}"></script>
+
+        <!-- Google Font: Source Sans Pro -->
+        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    
+        <!-- Styles -->
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.min.css">
+      
     </head>
-    <body>
-        <div class="container">
-            @include('inc.messages')
+    <body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-logo">
+        <b>Campaign</b>WOX</a>
         </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-offset-2 col-sm-8">
-                    <form action="{{ route('users.signin') }}" method="post">
-                        <center><img src="{{asset('images/Elite_logo.png')}}" alt="Logo" width="70%" height="auto" style="padding:2px;"></center>
-                        <h1>Campaign Wox System</h1>
-                        <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" id="username" name="username" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" class="form-control">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Sign In</button>
-                        {!! csrf_field() !!}
-                    </form>
+        <!-- /.login-logo -->
+        <div class="card">
+        <div class="card-body login-card-body">
+            <p class="login-box-msg">Sign in to start your session</p>
+    
+            <form action="{{ route('users.signin') }}" method="post">
+            <div class="input-group mb-3">
+                <input type="text" id="username" name="username" class="form-control" placeholder="Username">
+                <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-user"></span>
+                </div>
                 </div>
             </div>
-        
-            <footer id="footer">
-                Developed by Avanet Technologies &copy; <?php
-                    $fromYear = 2015; 
-                    $thisYear = (int)date('Y'); 
-                    echo $fromYear . (($fromYear != $thisYear) ? '-' . $thisYear : '');
-                ?>        
-            </footer>
+            <div class="input-group mb-3">
+                <input type="password" id="password" name="password" class="form-control" placeholder="Password">
+                <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-lock"></span>
+                </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                <div class="icheck-primary">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">
+                    Remember Me
+                    </label>
+                </div>
+                </div>
+                <!-- /.col -->
+                <div class="col-4">
+                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                {!! csrf_field() !!}
+                </div>
+                <!-- /.col -->
+            </div>
+            </form>
+    
+            <div class="social-auth-links text-center mb-3">
+            <p>- OR -</p>
+            <a href="#" class="btn btn-block btn-primary">
+                <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
+            </a>
+            <a href="#" class="btn btn-block btn-danger">
+                <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
+            </a>
+            </div>
+            <!-- /.social-auth-links -->
+    
+            <p class="mb-1">
+            <a href="forgot-password.html">I forgot my password</a>
+            </p>
+            <p class="mb-0">
+            <a href="register.html" class="text-center">Register a new membership</a>
+            </p>
         </div>
+        <!-- /.login-card-body -->
+        </div>
+    </div>
+    <!-- /.login-box -->
+    <footer id="footer">
+        <strong>Developed by <a href="https://quadcorn.co.ke" target="_blank">Quadcorn Business Solutions</a> &copy; <?php
+            $fromYear = 2015; 
+            $thisYear = (int)date('Y'); 
+            echo $fromYear . (($fromYear != $thisYear) ? '-' . $thisYear : '');
+        ?></strong>       
+    </footer>
+    
     </body>
 </html>

@@ -33,8 +33,16 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ route('compose.index') }}" class="nav-link">
+                    <i class="nav-icon far fa-envelope"></i>
+                    <p>
+                    Compose
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route('contacts.index') }}" class="nav-link">
-                    <i class="nav-icon fas fa-th"></i>
+                    <i class="nav-icon fas fa-address-book"></i>
                     <p>
                     Contacts
                     </p>
@@ -42,15 +50,23 @@
             </li>
             <li class="nav-item">
                 <a href="{{ route('groups.index') }}" class="nav-link">
-                    <i class="nav-icon fas fa-th"></i>
+                    <i class="nav-icon fas fa-users"></i>
                     <p>
                     Groups
                     </p>
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ route('sent.index') }}" class="nav-link">
+                    <i class="nav-icon fas fa-paper-plane"></i>
+                    <p>
+                    Sent Messages
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route('users.logout') }}" class="nav-link">
-                    <i class="nav-icon fas fa-th"></i>
+                    <i class="nav-icon fa fa-arrow-right"></i>
                     <p>
                     Logout
                     </p>
