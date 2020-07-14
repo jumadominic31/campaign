@@ -46,6 +46,11 @@ Route::group(['middleware' => 'auth'] , function () {
         'uses' => 'GroupsController@store' , 
         'as' => 'groups.store'
     ]);
+    
+    Route::get('/groups/{id}/edit', [
+        'uses' => 'GroupsController@edit' , 
+        'as' => 'groups.edit'
+    ]);
 
     Route::match(array('PUT', 'PATCH'), '/groups/{id}', [
         'uses' => 'GroupsController@update' , 
@@ -68,19 +73,19 @@ Route::group(['middleware' => 'auth'] , function () {
         'as' => 'contacts.store'
     ]);
 
-    Route::match(array('PUT', 'PATCH'), '/contacts/{id}', [
-        'uses' => 'ContactsController@update' , 
-        'as' => 'contacts.update'
-    ]);
-
     Route::delete('/contacts/{id}', [
         'uses' => 'ContactsController@destroy' , 
         'as' => 'contacts.destroy'
     ]);
 
-    Route::get('/contacts/getgroups/{contact_id}', [
-        'uses' => 'ContactsController@getgroups' , 
-        'as' => 'contacts.getgroups'
+    Route::get('/contacts/{id}/edit', [
+        'uses' => 'ContactsController@edit' , 
+        'as' => 'contacts.edit'
+    ]);
+
+    Route::match(array('PUT', 'PATCH'), '/contacts/{id}', [
+        'uses' => 'ContactsController@update' , 
+        'as' => 'contacts.update'
     ]);
 
     // Compose

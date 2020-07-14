@@ -153,7 +153,7 @@
                       <td>{{$group['name']}}</td>
                       <td>{{$group['description']}}</td>
                       <td>
-                          <a href="#" class="btn btn-success editBtn">Edit</a>
+                        <a href="{{ route('groups.edit', ['id' => $group->id ]) }}" class="btn btn-primary">View/Edit</a>
                           <a href="#" class="btn btn-danger deleteBtn">Delete</a>
                       </td>
                     </tr>

@@ -27,11 +27,11 @@
             </div>
             <div class="form-contact">
               <label for="name" class="col-form-label">Contact Name:</label>
-              <input type="text" class="form-control" name="name">
+              <input type="text" class="form-control" name="name" required>
             </div>
             <div class="form-contact">
               <label for="phone" class="col-form-label">Phone:</label>
-              <input type="text" class="form-control" name="phone">
+              <input type="text" class="form-control" name="phone" required placeholder="format 254722000000">
             </div>
             <div class="form-contact">
                 <label for="email" class="col-form-label">Email:</label>
@@ -69,89 +69,13 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save Contact</button>
+            <button id="addSubmit" type="submit" class="btn btn-primary">Save Contact</button>
           </div>
         </form>
       </div>
     </div>
   </div>
   {{-- end add contact --}}
-
-  {{-- edit contact modal --}}
-  <div class="modal fade" id="editContactMdl" tabindex="-1" role="dialog" aria-labelledby="editContactLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editModalLabel">Edit Contact</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-      <form id="editForm">
-          {{ csrf_field() }}
-          {{ method_field('PUT') }}
-          <div class="modal-body">
-            <div class="form-group">
-                <label>Title</label>
-                <select name="title" id="title" class="form-control select" style="width: 100%;">
-                  <option selected="selected"></option>
-                  <option value="Mr">Mr</option>
-                  <option value="Ms">Ms</option>
-                  <option value="Mrs">Mrs</option>
-                  <option value="Dr">Dr</option>
-                </select>
-            </div>
-            <div class="form-contact">
-              <label for="name" class="col-form-label">Contact Name:</label>
-              <input type="text" class="form-control" name="name" id="name">
-            </div>
-            <div class="form-contact">
-              <label for="phone" class="col-form-label">Phone:</label>
-              <input type="text" class="form-control" name="phone" id="phone">
-            </div>
-            <div class="form-contact">
-                <label for="email" class="col-form-label">Email:</label>
-                <input type="email" class="form-control" name="email" id="email">
-            </div>
-            <div class="form-group">
-                <label>Gender</label>
-                <select name="gender" id="gender" class="form-control select" style="width: 100%;">
-                    <option selected="selected"></option>
-                    <option value="1">Male</option>
-                    <option value="2">Female</option>
-                    <option value="3">Other</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Multiple</label>
-                <select class="select2" id="groups" name="groups[]" multiple="multiple" data-placeholder="Select Group(s) to add User" style="width: 100%;">
-                  @foreach ($groups as $group)
-                    <option value="{{ $group['id'] }}" 
-                    {{-- @if ($group['id'] == old(groups[]))
-                      selected = 'selected'
-                    @endif --}}
-                    >{{ $group['name']}}</option>
-                  @endforeach
-                </select>
-            </div>
-            <div class="form-contact">
-                <label>Opt In</label>
-                <select name="opt_in" id="opt_in" class="form-control select" style="width: 100%;">
-                    <option selected="selected" value="1">Yes</option>
-                    {{-- <option value="1">Yes</option> --}}
-                    <option value="0">No</option>
-                </select>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Update Contact</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-  {{-- end edit contact --}}
 
   {{-- delete contact modal --}}
   <div class="modal fade" id="deleteContactMdl" tabindex="-1" role="dialog" aria-labelledby="editContactLabel" aria-hidden="true">
@@ -251,7 +175,7 @@
                         @endif
                       </td>
                       <td>
-                          <a href="#" class="btn btn-success editBtn">Edit</a>
+                          <a href="{{ route('contacts.edit', ['id' => $contact->id ]) }}" class="btn btn-primary">View/Edit</a>
                           <a href="#" class="btn btn-danger deleteBtn">Delete</a>
                       </td>
                     </tr>
@@ -277,79 +201,64 @@
     $(document).ready(function (){
       $('#addForm').on('submit', function(e){
         e.preventDefault();
+        
+        // $(this).find("button[type='submit']").prop('disabled',true);
+        
 
-        $.ajax({
-          type: 'POST',
-          url: '/contacts/store',
-          data: $('#addForm').serialize(),
-          success: function(response) {
-            if (response.contact){
-              console.log(JSON.stringify(response))
-              $('#addContactMdl').modal('hide')
-              alert('Data Saved');
-              location.reload();
+        $('#addForm').validate({
+          rules: {
+            name: {
+              required: true
+            },
+            phone: {
+              required: true
             }
-            else {
-              console.log(response.error)
-              alert('Error saving data');
+          },
+          messages: {
+            name: {
+              required: "Please enter name"
+            },
+            phone: {
+              required: "Please enter a phone number"
             }
-          } 
+          },
+          errorElement: 'span',
+          errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+          },
+          highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+          },
+          unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+          },
+
+          submitHandler: function(form) {
+            $("#addSubmit").prop('disabled', true); 
+            $.ajax({
+              type: 'POST',
+              url: '/contacts/store',
+              data: $('#addForm').serialize(),
+              success: function(response) {
+                if (response.contact){
+                  console.log(JSON.stringify(response))
+                  $('#addContactMdl').modal('hide')
+                  alert('Data Saved');
+                  location.reload();
+                }
+                else {
+                  console.log(response.error)
+                  alert('Error saving data');
+                }
+              } 
+            });
+          }
         });
+        
       });
     });
   </script>
-
-<script type="text/javascript">
-  $(document).ready(function (){
-    $('.select2').select2();
-    
-    var table = $('#contacttable').DataTable() ;
-    table.on('click', '.editBtn', function(){
-    // $('.editBtn').on('click', function(){
-      $('#editContactMdl').modal('show');
-      
-      $tr = $(this).closest('tr');
-      var data = $tr.children('td').map(function(){
-        return $(this).text();
-      }).get();
-      console.log(data);
-      $('#title').val(data[1]);
-      $('#name').val(data[2]);
-      $('#phone').val(data[3]);
-      $('#email').val(data[4]);
-      $('#gender').val(data[5]);
-      $('#opt_in').val(data[6]);
-
-      $('#editForm').on('submit', function(e){
-        e.preventDefault();
-        // var id = $('#id').val();
-        var id = data[0];
-        $.ajax({
-          type: 'PUT',
-          url: '/contacts/'+id,
-          dataType: 'text json',
-          data: $('#editForm').serialize(),
-          success: function(response) {
-            // if (response.error){
-            //   console.log(response.error)
-            //   alert('Error saving data');
-            // }
-            // else {
-              // console.log(JSON.stringify(response));
-              console.log(JSON.stringify(response));
-              $('#editContactMdl').modal('hide');
-              alert('Data Updated');
-              location.reload();
-            // }
-          },
-          error: function(response) {
-            console.log('Error:', response);
-          }
-        });
-      })
-    });
-  });
-</script>
 
 <script type="text/javascript">
   $(document).ready(function (){
@@ -391,19 +300,5 @@
     });
   });
 </script>
-{{-- <script>
-  $('#stationid').on('change',function(e){
-      var stationid = e.target.value;
-
-      $.get('/stationid/attendant/'+stationid, function(data){
-          $('#attendantid').empty();
-          $.each(data, function(index, attendantObj){
-              $('#attendantid').append('<option value="'+attendantObj.id+'">'+attendantObj.username+'</option>');
-          });
-      });
-  });
-//
-</script> --}}
-  {{-- end edit script --}}
 
 @endsection

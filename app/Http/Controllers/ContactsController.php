@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
-// use Validator;
 
 class ContactsController extends Controller
 {
@@ -72,9 +71,22 @@ class ContactsController extends Controller
         return response()->json(['contact' => $contact, 'groups' => $groups], 201);
     }
 
+    public function edit($id)
+    {
+        $contact = Contact::where('customer_id', '=', '1')->find($id);
+        $groups = Group::where('customer_id', '=', '1')->get();
+        $membership = Contactgroupcombo::where('customer_id', '=', '1')->select('group_id')->where('contact_id', '=', $id)->pluck('group_id')->toArray();
+        if ($contact == null){
+            return redirect('/contacts')->with('error', 'Contact not found');
+        }
+
+        return view('contacts.edit',['contact'=> $contact, 'groups' => $groups, 'membership' => $membership]);
+    }
+
     public function update(Request $request, $id)
     {
         $contact = Contact::where('id', '=', $id)->first();
+        $membership = Contactgroupcombo::where('customer_id', '=', '1')->select('group_id')->where('contact_id', '=', $id)->pluck('group_id')->toArray();
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'phone' => 'required'
@@ -84,7 +96,8 @@ class ContactsController extends Controller
         if ($validator->fails())
         {
             $error = $validator->errors()->all();
-            return response()->json(['error' => $error, 'message' => 'error']);
+            return redirect()->back()->with('error', "Please enter the required fields");
+            // return response()->json(['error' => $error, 'message' => 'error']);
         }
         
         $user_id = Auth::user()->id;
@@ -111,32 +124,57 @@ class ContactsController extends Controller
         $contact->save();
 
         $groups = $request->input('groups');
+        // dd($groups);
         if (!empty($groups)) 
         {
-            foreach ($groups as $group){
-                $congrpcombo = new Contactgroupcombo;
-                $congrpcombo->customer_id = '1';
-                $congrpcombo->contact_id = $contact->id;
-                $congrpcombo->group_id = $group;
-                $congrpcombo->save();
+            foreach ($groups as $group)
+            {
+                if (!in_array($group, $membership))
+                {
+                    $congrpcombo = new Contactgroupcombo;
+                    $congrpcombo->customer_id = '1';
+                    $congrpcombo->contact_id = $contact->id;
+                    $congrpcombo->group_id = $group;
+                    $congrpcombo->save();
+                }
+                
+            }
+            foreach ($membership as $member)
+            {
+                if (!in_array($member, $groups))
+                {
+                    $congrpcombo = Contactgroupcombo::where('group_id', '=', $member)->where('contact_id', '=', $id)->first();
+                    $congrpcombo->delete();
+                }
+            }
+        }
+        else
+        {
+            foreach ($membership as $member)
+            {
+                $congrpcombo = Contactgroupcombo::where('group_id', '=', $member)->where('contact_id', '=', $id)->first();
+                $congrpcombo->delete();
             }
         }
 
-        // return redirect('/contacts', ['success' => 'Contact updated', 'groups' => $groups]);
-        return response()->json(['contact' => $contact, 'groups' => $groups], 204);
+        // return redirect('/contacts')->with('success', 'Contact details updated');
+        return  redirect()->back()->with('success', 'Contact details updated');
+        // return response()->json(['contact' => $contact, 'groups' => $groups], 204);
     }
 
     public function destroy($id)
     {
+        $contactgroupcombo = Contactgroupcombo::where('customer_id', '=', '1')->select('id')->where('contact_id', '=', $id)->pluck('id')->toArray();
+        foreach ($contactgroupcombo as $cgc)
+        {
+            $congrpcombo = Contactgroupcombo::where('id', '=', $cgc)->first();
+            $congrpcombo->delete();
+        }
         $contact = Contact::find($id);
         $contact->delete();
+        
         // return redirect('/contacts')->with('success', 'Contact Deleted');
         return response()->json(['message' => 'success'], 204);
     }
-    
-    public function getgroups($contact_id)
-    {
-        $groups = Contactgroupcombo::join('groups', 'contactgroupcombos.group_id', '=', 'groups.id')->select('contactgroupcombos.group_id', 'groups.name' )->where('contact_id', '=', $contact_id)->get();
-        return response()->json(['groups' => $groups], 200);
-    }
+
 }
