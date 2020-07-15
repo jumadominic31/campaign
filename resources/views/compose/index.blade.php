@@ -58,17 +58,18 @@
                   </select>
                 </div>
                 <div class="form-group">
+                    <p> To specify: title {title}, firstname {fname} or lastname {lname} </p> 
                     <textarea id="msgarea" name="msgarea" class="form-control" style="height: 100px" placeholder="Message goes here"></textarea>
                 </div>
               </div>
             
-            <!-- /.card-body -->
+              <!-- /.card-body -->
               <div class="card-footer">
               <div class="float-right">
                   <button type="button" class="btn btn-default"><i class="fas fa-pencil-alt"></i> Draft</button>
                   <button type="submit" class="btn btn-primary"><i class="far fa-envelope"></i> Send</button>
               </div>
-              <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Discard</button>
+                <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Discard</button>
               </div>
             </form>
             <!-- /.card-footer -->

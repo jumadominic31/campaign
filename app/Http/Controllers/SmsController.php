@@ -54,7 +54,20 @@ class SmsController extends Controller
          if (!empty($contacts)) 
          {
             foreach ($contacts as $contact){
-               $phone = Contact::select('phone')->where('id', '=', $contact)->pluck('phone')->first();
+               // $phone = Contact::select('phone')->where('id', '=', $contact)->pluck('phone')->first();
+               $contobj = Contact::where('id', '=', $contact)->first();
+               $phone = $contobj->phone;
+               $name = $contobj->name;
+               $title = $contobj->title;
+               $arr = explode(' ',trim($name)); //extracting first name
+               $fname = $arr[0];
+               $lname = array_pop($arr);
+
+               $variables = array('fname' => $fname, 'title' => $title, 'lname' => $lname);
+               foreach ($variables as $key => $value){
+                  $message = str_replace('{'.$key.'}', $value, $message);
+               }
+               
                $recipients = "+". $phone;
                $from = $apidetails->atgsender_id;
 
