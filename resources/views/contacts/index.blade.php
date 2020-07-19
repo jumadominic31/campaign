@@ -133,7 +133,26 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addContactMdl" >Add Contact</button>
+                <div class="row">
+                  <div >
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addContactMdl" >Add Contact</button>
+                  </div>
+                  {!! Form::open(['action' => 'ContactsController@index', 'method'=>'POST', 'files'=>'true']) !!}
+                    <div class="col-12">
+                      <div class="form-group">
+                        <div class="input-group">
+                          <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="exampleInputFile" accept=".xls,.xlsx,.csv">
+                            <label class="custom-file-label" for="exampleInputFile">Add multiple contacts file</label>
+                          </div>
+                          <div class="input-group-append">
+                            <button type="submit" class="input-group-text" id="">Upload</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {!! Form::close() !!}
+                </div>
               </div>
               <!-- /.card-body -->
             </div>

@@ -8,6 +8,7 @@ use App\Smslog;
 use App\Atgcredential;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Exception\RequestException;
 
 class DashboardController extends Controller
 {
@@ -16,6 +17,7 @@ class DashboardController extends Controller
         $numgroups = Group::where('customer_id', '=', '1')->count();
         $numcontacts = Contact::where('customer_id', '=', '1')->count();
         $numsentmsgs = Smslog::where('customer_id', '=', '1')->count();
+        $balance = '';
 
         $apidetails = Atgcredential::where('customer_id', '=', '1')->first();
         $atgusername   = $apidetails->atgusername;
